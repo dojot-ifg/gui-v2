@@ -128,7 +128,7 @@ export const conf = {
   '7/idtable2demanda': {
     meta: {
       title: 'Demanda de Potência',
-      timestampField: 'PowerDemandLastOperation',
+      timestampField: 'powerDemandLastOperation',
       subTitle: 'Última Atualização: ',
       removeTimestamp: true,
       withRank: true,
@@ -155,7 +155,7 @@ export const conf = {
   '7/idtable4excedente': {
     meta: {
       title: 'Excedente de Reativos',
-      timestampField: 'SurplusReactivePowerLastOperation',
+      timestampField: 'surplusReactivePowerLastOperation',
       subTitle: 'Última Atualização: ',
       removeTimestamp: true,
       withRank: true,
@@ -221,6 +221,6 @@ export const queryCampusDevice = (dateFrom = '', dateTo = '') => ({
 export const queryLastOperation = {
   query:
     '\nquery getDeviceHistory($filter: HistoryInput!) {\n  getDeviceHistoryForDashboard(filter: $filter)\n}\n',
-  variables: `{"filter":{"devices":[ {"deviceID":"${DEVICE_OPERATION_ID}","attrs":["SurplusReactivePowerLastOperation","PowerDemandLastOperation","energyComsuptionLastOperation"]}],"dateFrom":"''","dateTo":"''","operationType":0,"lastN":1}}`,
+  variables: `{"filter":{"devices":[ {"deviceID":"${DEVICE_OPERATION_ID}","attrs":["surplusReactivePowerLastOperation","powerDemandLastOperation","energyComsuptionLastOperation"]}],"dateFrom":"''","dateTo":"''","operationType":0,"lastN":1}}`,
   isRealTime: false,
 };

@@ -61,11 +61,7 @@ const Dashboard = props => {
       .then(resp => {
         const { getDeviceHistoryForDashboard } = resp;
         const deviceHistory = JSON.parse(getDeviceHistoryForDashboard);
-        let attrs = {};
-        deviceHistory.forEach(lin => {
-          attrs = { ...lin, ...attrs };
-        });
-        setLastOperation(attrs);
+        setLastOperation(deviceHistory);
       })
       .catch(error => {
         console.error(error);
