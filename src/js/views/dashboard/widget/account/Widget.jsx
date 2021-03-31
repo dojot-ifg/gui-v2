@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 
 import { WidgetCard } from 'Components/Cards';
-import { formatDate } from 'Utils';
 
 import Summarizer from './summarizer';
 
@@ -9,12 +8,8 @@ const AccountWidget = ({ id, data, config, onDelete, onPin, onEdit }) => {
   const { fields, meta } = config;
 
   const renderSubheader = useCallback(() => {
-    if (data && data.length) {
-      const ts = data[0].timestamp;
-      return `Atualizado em: ${formatDate(ts, 'DD/MM/YYYY HH:mm:ss')}`;
-    }
-    return null;
-  }, [data]);
+    return ' ';
+  }, []);
 
   const renderSumarization = useCallback(() => {
     if (data && data.length) {
