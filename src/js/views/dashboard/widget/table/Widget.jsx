@@ -13,11 +13,27 @@ const TableWidget = ({ id, data, config, onDelete, onPin, lastOperation }) => {
   const [subHeader, setSubHeader] = useState();
 
   useEffect(() => {
-    if (lastOperation === {}) return;
-    if (meta) {
-      const ts = lastOperation[`${DEVICE_OPERATION_ID}${meta.timestampField}`];
-      setSubHeader(`Atualizado em: ${formatDate(ts, 'DD/MM/YYYY HH:mm:ss')}`);
+    if (lastOperation.length === undefined) return;
+    if (!meta) return;
+
+    let calcTs;
+    let ts;
+    lastOperation.forEach(lin => {
+      if (lin[`${DEVICE_OPERATION_ID}${meta.timestampField}`]) {
+        calcTs = lin[`${DEVICE_OPERATION_ID}${meta.timestampField}`];
+        ts = lin.timestamp;
+      }
+    });
+    if (calcTs === undefined) {
+      setSubHeader('   ');
+      return;
     }
+    setSubHeader(
+      `Dados consolidados as ${formatDate(ts, 'HH:mm:ss')} para ${formatDate(
+        calcTs,
+        'HH:mm:ss - DD/MM/YYYY',
+      )} `,
+    );
   }, [meta, lastOperation]);
 
   const renderTable = useCallback(() => {
