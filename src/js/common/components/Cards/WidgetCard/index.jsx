@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -13,7 +13,15 @@ import { useTranslation } from 'react-i18next';
 
 import useStyles from './style';
 
-export default ({ id, onDelete, onPin, config, subHeader, children }) => {
+export default ({
+  id,
+  hasReport,
+  onReport,
+  onPin,
+  config,
+  subHeader,
+  children,
+}) => {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -25,10 +33,12 @@ export default ({ id, onDelete, onPin, config, subHeader, children }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (callback = () => {}) => {
+  const handleClose = (callback = () => ({})) => {
     setAnchorEl(null);
     callback(id);
   };
+
+  const showReportMenu = !!hasReport;
   return (
     <Card className={classes.card} variant='outlined'>
       <CardHeader
@@ -49,9 +59,14 @@ export default ({ id, onDelete, onPin, config, subHeader, children }) => {
               anchorEl={anchorEl}
               keepMounted
               open={open}
-              onClose={handleClose}
+              onClose={() => handleClose()}
               TransitionComponent={Fade}
             >
+              {showReportMenu ? (
+                <MenuItem onClick={() => handleClose(onReport)}>
+                  <ListItemText primary={t('common:report')} />
+                </MenuItem>
+              ) : null}
               <MenuItem onClick={() => handleClose(onPin)}>
                 <ListItemText primary={t('common:pin')} />
               </MenuItem>
