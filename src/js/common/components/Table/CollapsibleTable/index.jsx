@@ -21,10 +21,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import useStyles from './style';
 
-const Icn = ({ meta, order, field, currentSortField }) => {
-  let auxfield = field;
-  if (meta.chart === 'PowerDemand') auxfield = `value${field}`;
-
+const Icn = ({ order, field, currentSortField }) => {
+  const auxfield = field;
   if (currentSortField !== auxfield) return null;
   if (order === 1) return <ArrowDropUpIcon fontSize='small' />;
   return <ArrowDropDownIcon fontSize='small' />;
@@ -48,13 +46,15 @@ const CollapsibleTable = ({ meta, columns, rows, withRank }) => {
   useEffect(() => {
     if (!_.isEmpty(sortedArray)) {
       switch (sortField.field) {
+        case '':
+          break;
         case 'maxPowerDemandRushTime':
         case 'maxPowerDemandNormalTime':
           setSortedArray(
             sortedArray.sort((a, b) =>
               compareAll(
-                a[sortField.field] ? a[sortField.field].value : null,
-                b[sortField.field] ? b[sortField.field].value : null,
+                a[sortField.field] ? a[sortField.field].value : 0,
+                b[sortField.field] ? b[sortField.field].value : 0,
                 sortField.order,
               ),
             ),
@@ -65,8 +65,8 @@ const CollapsibleTable = ({ meta, columns, rows, withRank }) => {
             sortedArray.sort((a, b) =>
               // 'undefined' was changed to 0, so the data will be at midrange.
               compareAll(
-                a[sortField.field] ? a[sortField.field].value : 0,
-                b[sortField.field] ? b[sortField.field].value : 0,
+                a[sortField.field] ? a[sortField.field] : 0,
+                b[sortField.field] ? b[sortField.field] : 0,
                 sortField.order,
               ),
             ),
@@ -76,8 +76,8 @@ const CollapsibleTable = ({ meta, columns, rows, withRank }) => {
           setSortedArray(
             sortedArray.sort((a, b) =>
               compareAll(
-                a[sortField.field],
-                b[sortField.field],
+                a[sortField.field] ? a[sortField.field] : 0,
+                b[sortField.field] ? b[sortField.field] : 0,
                 sortField.order,
               ),
             ),
@@ -108,7 +108,6 @@ const CollapsibleTable = ({ meta, columns, rows, withRank }) => {
                       onClick={() => changeSorting(column.dataKey)}
                       endIcon={
                         <Icn
-                          meta={meta}
                           currentSortField={sortField.field}
                           field={column.dataKey}
                           order={sortField.order}
