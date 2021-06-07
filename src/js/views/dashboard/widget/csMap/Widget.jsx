@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { WidgetCard } from 'Components/Cards';
 import { getMarkerColor } from 'Components/MapMarkers';
+import { ExportToCsv } from 'export-to-csv';
 import _ from 'lodash';
 import moment from 'moment';
 import { Map, TileLayer, Marker, Tooltip } from 'react-leaflet';
@@ -36,6 +37,15 @@ const useStyles = makeStyles(theme => {
   };
 });
 
+const csvMapConfig = () => ({
+  fieldSeparator: ',',
+  showLabels: true,
+  filename: `report_maplocation`,
+  useTextFile: false,
+  useBom: true,
+  useKeysAsHeaders: true,
+});
+
 export default ({ id, onDelete, onPin, data, config }) => {
   const [markersCounter, setMarkersCounter] = useState({
     red: 0,
@@ -48,9 +58,9 @@ export default ({ id, onDelete, onPin, data, config }) => {
   const mapRef = useRef();
   const { clientHeight, clientWidth } = !mapRef.current
     ? {
-        clientHeight: 0,
-        clientWidth: 0,
-      }
+      clientHeight: 0,
+      clientWidth: 0,
+    }
     : mapRef.current.container;
 
   useEffect(() => {
@@ -130,6 +140,29 @@ export default ({ id, onDelete, onPin, data, config }) => {
     );
   }, [data]);
 
+  const onReport = () => {
+    try {
+      const listToExport = [];
+      Object.entries(data).forEach(([key, values]) => {
+        const dev = {
+          id: key.replace('current_time', ''),
+          timestamp: moment(values.timestamp).format('HH:mm:ss DD/MM/YY'),
+          label: values.deviceLabel,
+          position: values.value.join(','),
+        };
+        listToExport.push(dev);
+      });
+      //  Generates and download CSV
+      if (listToExport.length) {
+        const csvExporter = new ExportToCsv(csvMapConfig());
+        csvExporter.generateCsv(listToExport);
+      }
+    } catch (error) {
+      // @Todo show error to user
+      console.error(error);
+    }
+  };
+
   const Totalizer = () => {
     const { red, green, yellow } = markersCounter;
     const itemStyle = (color, position) => {
@@ -181,8 +214,10 @@ export default ({ id, onDelete, onPin, data, config }) => {
   return (
     <WidgetCard
       id={id}
+      hasReport
       onDelete={onDelete}
       onPin={onPin}
+      onReport={onReport}
       config={config}
       subHeader={null}
     >
